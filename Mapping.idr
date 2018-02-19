@@ -72,8 +72,7 @@ mappingToList (MapNode l k v r) = (mappingToList l) ++ ((k, v) :: mappingToList 
 mappingToList MapNil = []
 
 listToMapping : Ord k => List (k, v) -> Mapping k v
-listToMapping ((k, v) :: xs) = mappingSet (listToMapping xs) k v
-listToMapping [] = MapNil
+listToMapping xs = foldl (\h, (k, v) => mappingSet h k v) MappingNil xs
 
 Cast (Mapping k v) (List (k, v)) where
 	cast = mappingToList
