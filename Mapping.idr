@@ -55,9 +55,17 @@ mappingMayRemove : Ord k => Mapping k v -> k -> Mapping k v
 mappingMayRemove (MapNode l mk v r) k =
 	case compare k mk of
 		LT => MapNode (mappingMayRemove l k) mk v r
-		EQ => MapNil
+		EQ => mappingUnion (\k, v1, v2 => case False of True => v1) l r
 		GT => MapNode l mk v (mappingMayRemove r k)
 mappingMayRemove MapNil _ = MapNil
+
+mappingRemove : Ord k => Mapping k v -> k -> Maybe (Mapping k v)
+mappingRemove (MapNode l mk v r) k =
+    case compare k mk of
+        LT => map (\l => MapNode l mk v r) (mappingRemove l k)
+        EQ => Just (mappingUnion (\k, v1, v2 => case False of True => v1) l r)
+        GT => map (\r => MapNode l mk v r) (mappingRemove r k)
+mappingRemove MappingNil _ = Nothing
 
 mappingHas : Ord k => Mapping k v -> k -> Bool
 mappingHas (MapNode l mk v r) k =
