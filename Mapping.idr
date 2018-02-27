@@ -22,13 +22,13 @@ data Mapping k v = MapNil | MapNode (Mapping k v) k v (Mapping k v)
 MappingNil : Mapping k v
 MappingNil = MapNil
 
-mappingRef : Ord k => Mapping k v -> k -> v -> v
-mappingRef (MapNode l mk v r) k d =
+mappingRef : Ord k => Mapping k v -> k -> Maybe v
+mappingRef (MapNode l mk v r) k =
 	case compare k mk of
-		LT => mappingRef l k d
-		EQ => v
-		GT => mappingRef r k d
-mappingRef MapNil _ d = d
+		LT => mappingRef l k
+		EQ => Just v
+		GT => mappingRef r k
+mappingRef MapNil _ = Nothing
 
 mappingSet : Ord k => Mapping k v -> k -> v -> Mapping k v
 mappingSet (MapNode l mk mv r) k v =
